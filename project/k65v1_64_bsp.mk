@@ -1,10 +1,7 @@
 LOCAL_DIR := $(GET_LOCAL_DIR)
 TARGET := k65v1_64_bsp
 
-# --- UPDATED FOR OPPO A31 ---
-# 1. Disable Logo Support to stop the "No rule to make target" error
-MTK_LOGO_SUPPORT := no
-BOOT_LOGO := none
+
 
 # 2. Disable Verified Boot to prevent bootloops on unsigned custom builds
 MTK_SECURITY_SW_SUPPORT := no

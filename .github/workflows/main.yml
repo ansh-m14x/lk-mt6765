@@ -1,36 +1,30 @@
-name: Move Files to Root
+name: Build Little Kernel
 
 on:
+  push:
+    branches: [ lk-root-branch ]
   workflow_dispatch:
 
 jobs:
-  move-files:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: lk-root-branch
 
-      - name: Move files to root and commit
+      - name: Install Toolchain
         run: |
-          # Configure git identity
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Create and switch to new branch
-          git checkout -b lk-root-branch
-          
-          # Move everything from lk folder to current root
-          mv lk/* .
-          
-          # Remove the empty lk folder
-          rm -rf lk
-          
-          # Stage and commit changes
-          git add .
-          git commit -m "Refactor: Move contents of lk/ to root"
-          
-          # Push the new branch
-          git push origin lk-root-branch
+          sudo apt-get update
+          sudo apt-get install -y gcc-arm-none-eabi make
 
+      - name: Build LK
+        run: |
+          make PROJECT=k65v1_64_bsp TOOLCHAIN_PREFIX=arm-none-eabi-
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lk-binaries
+          path: build-k65v1_64_bsp/lk.bin

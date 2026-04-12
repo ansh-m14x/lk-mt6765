@@ -1,0 +1,36 @@
+name: Move Files to Root
+
+on:
+  workflow_dispatch:
+
+jobs:
+  move-files:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Move files to root and commit
+        run: |
+          # Configure git identity
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Create and switch to new branch
+          git checkout -b lk-root-branch
+          
+          # Move everything from lk folder to current root
+          mv lk/* .
+          
+          # Remove the empty lk folder
+          rm -rf lk
+          
+          # Stage and commit changes
+          git add .
+          git commit -m "Refactor: Move contents of lk/ to root"
+          
+          # Push the new branch
+          git push origin lk-root-branch
+
